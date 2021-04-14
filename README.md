@@ -62,7 +62,6 @@ luci-app-serverchan #微信推送
 luci-app-smartdns #本地高性能DNS服务器，支持返回最快IP，支持广告过滤  
 luci-app-socat #多功能网络工具,类似于netcat  
 luci-app-tcpdump #网络抓包工具（需配合wireshark使用）  
-luci-app-timecontrol #对局域网设备的上时间控制  
 luci-app-ttnode #甜糖星愿自动采集  
 luci-app-vssr #富强、民主、爱国、敬业  
 luci-theme-argon #argon主题（与lean源码自带的argon主题冲突，使用此主题，请先删除lean源码自带的argon主题）  
