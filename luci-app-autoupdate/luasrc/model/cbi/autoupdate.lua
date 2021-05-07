@@ -1,6 +1,6 @@
 require("luci.sys")
 
-m=Map("autoupdate",translate("AutoUpdate"),translate("Scheduled Update is a timed run Openwrt-AutoUpdate application"))
+m=Map("autoupdate",translate("AutoUpdate"),translate("AutoUpdate LUCI supports one-click firmware upgrade and scheduled upgrade"))
 
 s=m:section(TypedSection,"login","")
 s.addremove=false
@@ -29,22 +29,27 @@ pass=s:option(Value,"minute",translate("xMinute"))
 pass.datatype = "range(0,59)"
 pass.rmempty = false
 
-local github_url = luci.sys.exec("cat /etc/openwrt_info | awk 'NR==2'")
+local github_url = luci.sys.exec("grep Github= /etc/openwrt_info | cut -c8-100")
 o=s:option(Value,"github",translate("Github Url"))
 o.default=github_url
 
 luci.sys.call ( "/usr/share/autoupdate/Check_Update.sh > /dev/null")
 local cloud_version = luci.sys.exec("cat /tmp/cloud_version")
-local current_version = luci.sys.exec("cat /etc/openwrt_info | awk 'NR==1'")
-local current_model = luci.sys.exec("jsonfilter -e '@.model.id' < /etc/board.json | tr ',' '_'")
-
-local firmware_type = luci.sys.exec("cat /etc/openwrt_info | awk 'NR==4'")
+local current_version = luci.sys.exec("grep CURRENT_Version= /etc/openwrt_info | cut -c17-100")
+local current_model = luci.sys.exec("grep DEFAULT_Device= /etc/openwrt_info | cut -c16-100")
+local firmware_type = luci.sys.exec("grep Firmware_Type= /etc/openwrt_info | cut -c15-100")
 
 button_upgrade_firmware = s:option (Button, "_button_upgrade_firmware", translate("Upgrade to Latested Version"),
-translatef("点击上方 执行更新 后请耐心等待至路由器重启.") .. "<br><br>当前固件版本: " .. current_version .. "<br>云端固件版本: " .. cloud_version.. "<br>固件类型: " .. firmware_type)
+translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>Current Version: " .. current_version .. "<br>Cloud Version: " .. cloud_version.. "<br>Firmware Type: " .. firmware_type)
 button_upgrade_firmware.inputtitle = translate ("Do Upgrade")
 button_upgrade_firmware.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u > /dev/null")
+end
+
+button_upgrade_firmware_proxy = s:option (Button, "_button_upgrade_firmware_proxy", translate("Upgrade to Latested Version"),translate("Upgrade with [FastGit] Proxy"))
+button_upgrade_firmware_proxy.inputtitle = translate ("Do Upgrade")
+button_upgrade_firmware_proxy.write = function()
+	luci.sys.call ("bash /bin/AutoUpdate.sh -up > /dev/null")
 end
 
 local e=luci.http.formvalue("cbi.apply")
