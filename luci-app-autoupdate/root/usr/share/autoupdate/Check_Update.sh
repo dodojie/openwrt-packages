@@ -11,12 +11,12 @@ fi
 	echo -e "\n未检测到 /etc/openwrt/info,无法运行更新程序!"
 	exit
 }
-[[ -z "${CURRENT_DEVICE}" ]] && CURRENT_DEVICE="$(jsonfilter -e '@.model.id' < "/etc/board.json" | tr ',' '_')"
+[[ -z "${DEFAULT_Device}" ]] && DEFAULT_Device="$(jsonfilter -e '@.model.id' < "/etc/board.json" | tr ',' '_')"
 [[ -z "${Github}" ]] && exit
 Author="${Github##*com/}"
 Github_Tags="https://api.github.com/repos/${Author}/releases/latest"
 wget -q ${Github_Tags} -O - > /tmp/Github_Tags
-case ${CURRENT_DEVICE} in
+case ${DEFAULT_Device} in
 x86_64)
 	if [ -d /sys/firmware/efi ];then
 		Firmware_SFX="-UEFI.${Firmware_Type}"
@@ -31,7 +31,7 @@ x86_64)
 	BOOT_Type=""
 ;;
 esac
-Cloud_Version="$(cat /tmp/Github_Tags | egrep -o "AutoBuild-${CURRENT_DEVICE}-R[0-9]+.[0-9]+.[0-9]+.[0-9]+${Firmware_SFX}" | awk 'END {print}' | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+')"
+Cloud_Version="$(cat /tmp/Github_Tags | egrep -o "AutoBuild-${DEFAULT_Device}-R[0-9]+.[0-9]+.[0-9]+.[0-9]+${Firmware_SFX}" | awk 'END {print}' | egrep -o 'R[0-9]+.[0-9]+.[0-9]+.[0-9]+')"
 if [[ ! -z "${Cloud_Version}" ]];then
 	if [[ "${CURRENT_Version}" == "${Cloud_Version}" ]];then
 		Checked_Type="已是最新"
