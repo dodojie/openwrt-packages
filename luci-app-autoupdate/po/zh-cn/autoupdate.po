@@ -42,12 +42,3 @@ msgstr "使用 [FastGit] 镜像更新固件"
 
 msgid "Please wait patiently after clicking Do Upgrade button"
 msgstr "点击执行更新后请耐心等待至路由器重启"
-
-msgid "Current Version: "
-msgstr "当前固件版本: "
-
-msgid "Cloud Version: "
-msgstr "云端固件版本: "
-
-msgid "Firmware Type: "
-msgstr "固件类型: "
