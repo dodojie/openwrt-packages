@@ -3,27 +3,23 @@ START=99
 
 run_autoupdate()
 {
-	local enable
+	local enable week minute hour
 	config_get_bool enable $1 enable
-	if [ $enable == "1" ]; then
+	if [[ $enable == 1 ]]; then
 		local minute
 		local hour
 		config_get week $1 week
 		config_get minute $1 minute
 		config_get hour $1 hour
-		[ "$week" == 7 ] && week="*"
-		sed -i '/AutoUpdate/d' /etc/crontabs/root >/dev/null 2>&1
-		echo "$minute $hour * * $week bash /bin/AutoUpdate.sh -u" >> /etc/crontabs/root
+		[[ $week == 7 ]] && week="*"
+		bash /bin/AutoUpdate.sh --corn-del
+		bash /bin/AutoUpdate.sh --corn task="-u" "$minute $hour * * $week"
 	else
-		sed -i '/AutoUpdate/d' /etc/crontabs/root >/dev/null 2>&1	
+		bash /bin/AutoUpdate.sh --corn-del
 	fi
-	if [ -f /bin/AutoUpdate.sh ] && [ -f /etc/openwrt_info ];then
+	if [ -f /bin/AutoUpdate.sh ];then
 		custom_github_url="$(uci get autoupdate.@login[0].github)"
-		current_github_url="$(grep Github= /etc/openwrt_info | cut -c8-100)"
-		[[ "${custom_github_url}" != "${current_github_url}" ]] && {
-			echo "Change Github URL to ${custom_github_url}"
-			bash /bin/AutoUpdate.sh -c ${custom_github_url} >/dev/null 2>&1
-		}
+		bash /bin/AutoUpdate.sh -C ${custom_github_url}
 	fi
 	/etc/init.d/cron restart
 }
@@ -36,8 +32,8 @@ start()
 
 stop()
 {
-	sed -i '/AutoUpdate/d' /etc/crontabs/root >/dev/null 2>&1
-	bash /bin/AutoUpdate.sh -d >/dev/null 2>&1
+	bash /bin/AutoUpdate.sh --corn-del >/dev/null 2>&1
+	bash /bin/AutoUpdate.sh --clean >/dev/null 2>&1
 }
 
 restart()
