@@ -2,13 +2,7 @@ msgid "AutoUpdate"
 msgstr "定时更新"
 
 msgid "xWeek Day"
-msgstr "更新时间"
-
-msgid "Everyday"
-msgstr "每天"
-
-msgid "Day"
-msgstr "天"
+msgstr "更新日期"
 
 msgid "xHour"
 msgstr "小时 [0~23]"
@@ -21,6 +15,12 @@ msgstr "检查更新"
 
 msgid "Enable AutoUpdate"
 msgstr "启用定时更新"
+
+msgid "Preference Proxy"
+msgstr "镜像加速"
+
+msgid "Preference use [FastGit] to speed up downloads"
+msgstr "优先使用 [FastGit] 镜像加速下载固件"
 
 msgid "AutoUpdate LUCI supports one-click firmware upgrade and scheduled upgrade"
 msgstr "定时更新 LUCI 支持一键更新固件以及定时更新"

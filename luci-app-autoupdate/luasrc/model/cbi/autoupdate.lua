@@ -2,11 +2,14 @@ require("luci.sys")
 
 m=Map("autoupdate",translate("AutoUpdate"),translate("AutoUpdate LUCI supports one-click firmware upgrade and scheduled upgrade"))
 
-s=m:section(TypedSection,"login","")
+s=m:section(TypedSection,"common","")
 s.addremove=false
 s.anonymous=true
 
 o = s:option(Flag, "enable", translate("Enable AutoUpdate"),translate("Automatically update firmware during the specified time"))
+o.default = 0
+o.optional = false
+o = s:option(Flag, "enable_proxy", translate("Preference Proxy"),translate("Preference use [FastGit] to speed up downloads"))
 o.default = 0
 o.optional = false
 
@@ -33,14 +36,14 @@ local github_url = luci.sys.exec("bash /bin/AutoUpdate.sh --var Github")
 o=s:option(Value,"github",translate("Github Url"))
 o.default=github_url
 
-luci.sys.call ( "/usr/share/autoupdate/Check_Update.sh /tmp > /dev/null")
+luci.sys.call ( "/usr/share/autoupdate/Check_Update.sh > /dev/null")
 local cloud_version = luci.sys.exec("cat /tmp/Cloud_Version")
 local current_version = luci.sys.exec("bash /bin/AutoUpdate.sh --var CURRENT_Version")
 local current_model = luci.sys.exec("bash /bin/AutoUpdate.sh --var DEFAULT_Device")
 local firmware_type = luci.sys.exec("bash /bin/AutoUpdate.sh --var Firmware_Type")
 
 button_upgrade_firmware = s:option (Button, "_button_upgrade_firmware", translate("Upgrade to Latested Version"),
-translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前版本: " .. current_version .. "<br>云端版本: " .. cloud_version.. "<br>固件格式: " .. firmware_type)
+translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前固件版本: " .. current_version .. "<br>云端固件版本: " .. cloud_version.. "<br>固件格式: " .. firmware_type)
 button_upgrade_firmware.inputtitle = translate ("Do Upgrade")
 button_upgrade_firmware.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u > /dev/null")

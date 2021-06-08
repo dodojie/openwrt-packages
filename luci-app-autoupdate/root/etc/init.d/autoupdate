@@ -3,8 +3,9 @@ START=99
 
 run_autoupdate()
 {
-	local enable week minute hour
+	local enable enable_proxy week minute hour task
 	config_get_bool enable $1 enable
+	config_get_bool enable_proxy $1 enable_proxy
 	if [[ $enable == 1 ]]; then
 		local minute
 		local hour
@@ -13,12 +14,13 @@ run_autoupdate()
 		config_get hour $1 hour
 		[[ $week == 7 ]] && week="*"
 		bash /bin/AutoUpdate.sh --corn-del
-		bash /bin/AutoUpdate.sh --corn task="-u" "$minute $hour * * $week"
+		[[ $enable_proxy == 1 ]] && task="-u -P" || task="-u"
+		bash /bin/AutoUpdate.sh --corn task="$task" "$minute $hour * * $week"
 	else
 		bash /bin/AutoUpdate.sh --corn-del
 	fi
 	if [ -f /bin/AutoUpdate.sh ];then
-		custom_github_url="$(uci get autoupdate.@login[0].github)"
+		custom_github_url="$(uci get autoupdate.@common[0].github)"
 		bash /bin/AutoUpdate.sh -C ${custom_github_url}
 	fi
 	/etc/init.d/cron restart
@@ -27,7 +29,7 @@ run_autoupdate()
 start()
 {
 	config_load autoupdate
-	config_foreach run_autoupdate login
+	config_foreach run_autoupdate common
 }
 
 stop()
