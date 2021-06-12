@@ -6,7 +6,7 @@ LUCI_TITLE:=LuCI Support for AutoBuild Firmware
 LUCI_DEPENDS:=+curl +wget +bash
 LUCI_PKGARCH:=all
 PKG_VERSION:=1
-PKG_RELEASE:=20210608
+PKG_RELEASE:=20210612
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

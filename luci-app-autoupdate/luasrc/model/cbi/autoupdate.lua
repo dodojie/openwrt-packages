@@ -12,6 +12,9 @@ o.optional = false
 o = s:option(Flag, "enable_proxy", translate("Preference Proxy"),translate("Preference use [FastGit] to speed up downloads"))
 o.default = 0
 o.optional = false
+o = s:option(Flag, "force_write", translate("Force Write"),translate("Preference Force Write to upgrade firmware"))
+o.default = 0
+o.optional = false
 
 week=s:option(ListValue,"week",translate("xWeek Day"))
 week:value(7,translate("Everyday"))

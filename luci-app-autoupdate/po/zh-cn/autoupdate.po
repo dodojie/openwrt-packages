@@ -19,6 +19,9 @@ msgstr "启用定时更新"
 msgid "Preference Proxy"
 msgstr "镜像加速"
 
+msgid "Force Write"
+msgstr "强制刷写固件"
+
 msgid "Preference use [FastGit] to speed up downloads"
 msgstr "优先使用 [FastGit] 镜像加速下载固件"
 

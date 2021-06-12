@@ -3,9 +3,10 @@ START=99
 
 run_autoupdate()
 {
-	local enable enable_proxy week minute hour task
+	local enable enable_proxy force_write week minute hour task
 	config_get_bool enable $1 enable
 	config_get_bool enable_proxy $1 enable_proxy
+	config_get_bool force_write $1 force_write
 	if [[ $enable == 1 ]]; then
 		local minute
 		local hour
@@ -15,7 +16,11 @@ run_autoupdate()
 		[[ $week == 7 ]] && week="*"
 		bash /bin/AutoUpdate.sh --corn-del
 		[[ $enable_proxy == 1 ]] && task="-u -P" || task="-u"
-		bash /bin/AutoUpdate.sh --corn task="$task" "$minute $hour * * $week"
+		[[ $force_write == 1 ]] && {
+			bash /bin/AutoUpdate.sh --corn task="$task -F" "$minute $hour * * $week"
+		} || {
+			bash /bin/AutoUpdate.sh --corn task="$task" "$minute $hour * * $week"
+		}
 	else
 		bash /bin/AutoUpdate.sh --corn-del
 	fi
