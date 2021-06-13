@@ -40,8 +40,17 @@ msgstr "启用后将在指定时间段自动检查并更新固件"
 msgid "Github Url"
 msgstr "Github 地址"
 
+msgid "Script Url"
+msgstr "脚本地址"
+
 msgid "Upgrade with [FastGit] Proxy"
 msgstr "使用 [FastGit] 镜像更新固件"
 
 msgid "Please wait patiently after clicking Do Upgrade button"
 msgstr "点击执行更新后请耐心等待至路由器重启"
+
+msgid "This may solve some compatibility issues"
+msgstr "这也许能解决一些兼容性问题"
+
+msgid "Upgrade Script"
+msgstr "更新脚本"

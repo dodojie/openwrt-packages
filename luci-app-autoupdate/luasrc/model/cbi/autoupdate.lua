@@ -41,12 +41,13 @@ o.default=github_url
 
 luci.sys.call ( "/usr/share/autoupdate/Check_Update.sh > /dev/null")
 local cloud_version = luci.sys.exec("cat /tmp/Cloud_Version")
-local current_version = luci.sys.exec("bash /bin/AutoUpdate.sh --var CURRENT_Version")
-local current_model = luci.sys.exec("bash /bin/AutoUpdate.sh --var DEFAULT_Device")
+local local_version = luci.sys.exec("bash /bin/AutoUpdate.sh --var CURRENT_Version")
+local local_script_version = luci.sys.exec("bash /bin/AutoUpdate.sh -V local")
+local cloud_script_version = luci.sys.exec("bash /bin/AutoUpdate.sh -V cloud")
 local firmware_type = luci.sys.exec("bash /bin/AutoUpdate.sh --var Firmware_Type")
 
 button_upgrade_firmware = s:option (Button, "_button_upgrade_firmware", translate("Upgrade to Latested Version"),
-translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前固件版本: " .. current_version .. "<br>云端固件版本: " .. cloud_version.. "<br>固件格式: " .. firmware_type)
+translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前固件版本: " .. local_version .. "<br>云端固件版本: " .. cloud_version.. "<br>固件格式: " .. firmware_type)
 button_upgrade_firmware.inputtitle = translate ("Do Upgrade")
 button_upgrade_firmware.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u > /dev/null")
@@ -56,6 +57,13 @@ button_upgrade_firmware_proxy = s:option (Button, "_button_upgrade_firmware_prox
 button_upgrade_firmware_proxy.inputtitle = translate ("Do Upgrade")
 button_upgrade_firmware_proxy.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u -P > /dev/null")
+end
+
+button_upgrade_script = s:option (Button, "_button_upgrade_script", translate("Upgrade Script"),
+translatef("This may solve some compatibility issues") .. "<br><br>当前脚本版本: " .. local_script_version .. "<br>云端脚本版本: " .. cloud_script_version)
+button_upgrade_script.inputtitle = translate ("Do Upgrade")
+button_upgrade_script.write = function()
+	luci.sys.call ("bash /bin/AutoUpdate.sh -x -P > /dev/null")
 end
 
 local e=luci.http.formvalue("cbi.apply")
