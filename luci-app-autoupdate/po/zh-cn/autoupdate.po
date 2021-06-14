@@ -20,7 +20,10 @@ msgid "Preference Proxy"
 msgstr "镜像加速"
 
 msgid "Force Write"
-msgstr "强制刷写固件"
+msgstr "启用强制刷写"
+
+msgid "Preference Force Write to upgrade firmware"
+msgstr "优先使用 -F 参数强制刷写固件"
 
 msgid "Preference use [FastGit] to speed up downloads"
 msgstr "优先使用 [FastGit] 镜像加速下载固件"
@@ -50,7 +53,7 @@ msgid "Please wait patiently after clicking Do Upgrade button"
 msgstr "点击执行更新后请耐心等待至路由器重启"
 
 msgid "This may solve some compatibility issues"
-msgstr "这也许能解决一些兼容性问题"
+msgstr "使用最新脚本也许能解决一些兼容性问题"
 
 msgid "Upgrade Script"
 msgstr "更新脚本"
