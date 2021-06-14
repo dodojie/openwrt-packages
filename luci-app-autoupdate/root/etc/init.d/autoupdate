@@ -13,11 +13,11 @@ run_autoupdate()
 		config_get hour $1 hour
 		[[ $week == 7 ]] && week="*"
 		bash /bin/AutoUpdate.sh --corn-rm
-		[[ $enable_proxy == 1 ]] && task="-u -P" || task="-u"
+		[[ $enable_proxy == 1 ]] && task="bash /bin/AutoUpdate.sh -u -P" || task="bash /bin/AutoUpdate.sh -u"
 		[[ $force_write == 1 ]] && {
-			bash /bin/AutoUpdate.sh --corn task="$task -F" "$minute $hour * * $week"
+			echo -e "\n$minute $hour * * $week $task -F" >> /etc/crontabs/root
 		} || {
-			bash /bin/AutoUpdate.sh --corn task="$task" "$minute $hour * * $week"
+			echo -e "\n$minute $hour * * $week $task" >> /etc/crontabs/root
 		}
 	else
 		bash /bin/AutoUpdate.sh --corn-rm
