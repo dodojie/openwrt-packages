@@ -1,9 +1,9 @@
 require("luci.sys")
+local m,s
 
 m=Map("autoupdate",translate("AutoUpdate"),translate("AutoUpdate LUCI supports one-click firmware upgrade and scheduled upgrade"))
 
 s=m:section(TypedSection,"common","")
-s.addremove=false
 s.anonymous=true
 
 o = s:option(Flag, "enable", translate("Enable AutoUpdate"),translate("Automatically update firmware during the specified time"))
@@ -68,8 +68,7 @@ end
 
 local e=luci.http.formvalue("cbi.apply")
 if e then
-  io.popen("/etc/init.d/autoupdate restart")
+	io.popen("/etc/init.d/autoupdate restart")
 end
 
-m.reset  = false
 return m
