@@ -4,31 +4,37 @@ export Script=/bin/AutoUpdate.sh
 export Corn_Task="bash ${Script} -u"
 
 AutoUpdate_Service() {
-	local Enable Enable_Proxy Force_Write Week Minute Hour Github
 	[[ ! -f ${Script} ]] && exit 1
-	Enable=$(uci_get autoupdate common enable)
-	if [[ ${Enable} == 1 ]]; then
-		Enable_Proxy=$(uci_get autoupdate common enable_proxy)
-		Force_Write=$(uci_get autoupdate common force_write)
-		Week=$(uci_get autoupdate common week)
-		Minute=$(uci_get autoupdate common minute)
-		Hour=$(uci_get autoupdate common hour)
-		[[ ${Week} == 7 ]] && week="*"
+	local enable
+	config_get_bool enable $1 enable
+	if [[ ${enable} == 1 ]]; then
+		config_get enable_proxy $1 enable_proxy
+		config_get force_write $1 force_write
+		config_get week $1 week
+		config_get minute $1 minute
+		config_get hour $1 hour
+		config_get enable_proxy $1 enable_proxy
+		[[ ${week} == 7 ]] && week="*"
 		corn_rm
-		[[ ${Enable_Proxy} == 1 ]] && Corn_Task="${Corn_Task} -P"
-		[[ ${Force_Write} == 1 ]] && Corn_Task="${Corn_Task} -F"
-		echo "Corn: [${Minute} ${Hour} * * ${Week} ${Corn_Task}]"
-		echo -e "${Minute} ${Hour} * * ${Week} ${Corn_Task}		#AutoUpdate_CornTask" >> /etc/crontabs/root
+		[[ ${enable_proxy} == 1 ]] && Corn_Task="${Corn_Task} -P"
+		[[ ${force_write} == 1 ]] && Corn_Task="${Corn_Task} -F"
+		echo "Corn: [${minute} ${hour} * * ${week} ${Corn_Task}]"
+		echo -e "${minute} ${hour} * * ${week} ${Corn_Task}		#AutoUpdate_CornTask" >> /etc/crontabs/root
 		/etc/init.d/cron restart
 	else
 		uci_set autoupdate common force_write 0
 		uci_set autoupdate common enable_proxy 0
 		corn_rm
 	fi
-	Github=$(uci_get autoupdate common github)
-	echo "Github: ${Github}"
-	bash ${Script} -C ${Github} > /dev/null 2>&1
+	config_get github $1 github
+	echo "Github: ${github}"
+	bash ${Script} -C ${github} > /dev/null 2>&1
 	exit 0
+}
+
+uci_set() {
+	uci set $1.@$2[0].$3=$4
+	uci commit $1
 }
 
 corn_rm() {
@@ -39,20 +45,16 @@ corn_rm() {
 	}
 }
 
-uci_get() {
-	local Result="$(uci get $1.@$2[0].$3)"
-	[[ -n ${Result} ]] && echo "${Result}"
-}
-
-uci_set() {
-	uci set $1.@$2[0].$3=$4
-	uci commit $1
-}
-
 start() {
 	bash ${Script} --clean > /dev/null 2>&1
 	echo "Starting AutoUpdate service ..."
-	AutoUpdate_Service
+	config_load autoupdate
+	config_foreach AutoUpdate_Service common
+}
+
+service_triggers()
+{
+	procd_add_reload_trigger "autoupdate"
 }
 
 disable() {
