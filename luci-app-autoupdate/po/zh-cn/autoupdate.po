@@ -1,17 +1,8 @@
 msgid "AutoUpdate"
 msgstr "定时更新"
 
-msgid "xWeek Day"
-msgstr "更新日期"
-
-msgid "xHour"
-msgstr "小时 [0~23]"
-
-msgid "xMinute"
-msgstr "分钟 [0~59]"
-
-msgid "Check Update"
-msgstr "检查更新"
+msgid "Upgrade Day"
+msgstr "更新时间"
 
 msgid "Enable AutoUpdate"
 msgstr "启用定时更新"
@@ -19,14 +10,20 @@ msgstr "启用定时更新"
 msgid "Preference Proxy"
 msgstr "镜像加速"
 
-msgid "Force Write"
+msgid "Force Flashing"
 msgstr "启用强制刷写"
 
-msgid "Preference Force Write to upgrade firmware"
-msgstr "优先使用 -F 参数强制刷写固件"
+msgid "Recommend to upgrade the firmware automatically at idle time"
+msgstr "建议设置定时更新时间为不常用的时段"
 
-msgid "Preference use [FastGit] to speed up downloads"
-msgstr "优先使用 [FastGit] 镜像加速下载固件"
+msgid "For detecting cloud firmware version and downloading firmware"
+msgstr "用于检测固件版本更新以及下载固件"
+
+msgid "Preference Force Write to upgrade firmware"
+msgstr "优先使用 -F 参数强制刷写固件 (危险)"
+
+msgid "Preference use Proxy to speed up downloads"
+msgstr "优先使用 -P 参数镜像加速下载固件"
 
 msgid "AutoUpdate LUCI supports one-click firmware upgrade and scheduled upgrade"
 msgstr "定时更新 LUCI 支持一键更新固件以及定时更新"
@@ -34,7 +31,7 @@ msgstr "定时更新 LUCI 支持一键更新固件以及定时更新"
 msgid "Do Upgrade"
 msgstr "执行更新"
 
-msgid "Upgrade to Latested Version"
+msgid "Upgrade Firmware"
 msgstr "更新固件"
 
 msgid "Automatically update firmware during the specified time"
@@ -43,11 +40,11 @@ msgstr "启用后将在指定时间段自动检查并更新固件"
 msgid "Github Url"
 msgstr "Github 地址"
 
-msgid "Script Url"
-msgstr "脚本地址"
+msgid "Upgrade without keeping System-Config"
+msgstr "不保留配置更新固件"
 
 msgid "Upgrade with [FastGit] Proxy"
-msgstr "使用 [FastGit] 镜像更新固件"
+msgstr "优先使用 [FastGit] 镜像更新固件"
 
 msgid "Please wait patiently after clicking Do Upgrade button"
 msgstr "点击执行更新后请耐心等待至路由器重启"
