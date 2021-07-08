@@ -1,5 +1,4 @@
 require("luci.sys")
-local m,s
 
 m=Map("autoupdate",translate("AutoUpdate"),
 translate("AutoUpdate LUCI supports one-click firmware upgrade and scheduled upgrade")
@@ -10,14 +9,15 @@ translate("AutoUpdate LUCI supports one-click firmware upgrade and scheduled upg
 
 s=m:section(TypedSection,"common","")
 s.anonymous=true
+s.reset=false
 
 o = s:option(Flag, "enable", translate("Enable AutoUpdate"),translate("Automatically update firmware during the specified time"))
 o.default = 0
 o.optional = false
-o = s:option(Flag, "enable_proxy", translate("Preference Proxy"),translate("Preference use Proxy to speed up downloads"))
+o = s:option(Flag, "enable_proxy", translate("Preference Proxy"),translate("Preference Proxy for speeding up downloads"))
 o.default = 0
 o.optional = false
-o = s:option(Flag, "force_write", translate("Force Flashing"),translate("Preference Force Write to upgrade firmware"))
+o = s:option(Flag, "force_write", translate("Force Flashing"),translate("Preference Force Flash while firmware upgrading"))
 o.default = 0
 o.optional = false
 
@@ -44,14 +44,23 @@ local github_url = luci.sys.exec("bash /bin/AutoUpdate.sh --var Github")
 o=s:option(Value,"github",translate("Github Url"),translate("For detecting cloud firmware version and downloading firmware"))
 o.default=github_url
 
-local cloud_version = luci.sys.exec("bash /bin/AutoUpdate.sh -Q cloud")
-local local_version = luci.sys.exec("bash /bin/AutoUpdate.sh --var CURRENT_Version")
-local local_script_version = luci.sys.exec("bash /bin/AutoUpdate.sh -V")
-local cloud_script_version = luci.sys.exec("bash /bin/AutoUpdate.sh -V cloud")
-local firmware_type = luci.sys.exec("bash /bin/AutoUpdate.sh --var Firmware_Type")
+local local_version = luci.sys.exec ("bash /bin/AutoUpdate.sh --var CURRENT_Version")
+local firmware_type = luci.sys.exec ("bash /bin/AutoUpdate.sh --var Firmware_Type")
+local local_script_version = luci.sys.exec ("bash /bin/AutoUpdate.sh -V")
+
+button_check_updates = s:option (Button, "_button_check_updates", translate("Check Updates"),translate("Please Refresh the page after clicking Check Updates button"))
+button_check_updates.inputtitle = translate ("Check Updates")
+button_check_updates.write = function()
+	luci.sys.call ("bash /bin/AutoUpdate.sh -Q cloud > /tmp/Cloud_Version")
+	luci.sys.call ("bash /bin/AutoUpdate.sh -V cloud > /tmp/Cloud_Script_Version")
+end
+
+local cloud_version = luci.sys.exec ("cat /tmp/Cloud_Version")
+local cloud_script_version = luci.sys.exec ("cat /tmp/Cloud_Script_Version")
 
 button_upgrade_firmware = s:option (Button, "_button_upgrade_firmware", translate("Upgrade Firmware"),
 translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前固件版本: " .. local_version .. "<br>云端固件版本: " .. cloud_version)
+o.description = string.format(translate("core version:") .. "<strong><font id='updateversion' color='green'>%s </font></strong>", e)
 button_upgrade_firmware.inputtitle = translate ("Do Upgrade")
 button_upgrade_firmware.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u > /dev/null")
