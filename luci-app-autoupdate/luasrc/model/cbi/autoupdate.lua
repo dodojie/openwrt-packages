@@ -60,7 +60,6 @@ local cloud_script_version = luci.sys.exec ("cat /tmp/Cloud_Script_Version")
 
 button_upgrade_firmware = s:option (Button, "_button_upgrade_firmware", translate("Upgrade Firmware"),
 translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前固件版本: " .. local_version .. "<br>云端固件版本: " .. cloud_version)
-o.description = string.format(translate("core version:") .. "<strong><font id='updateversion' color='green'>%s </font></strong>", e)
 button_upgrade_firmware.inputtitle = translate ("Do Upgrade")
 button_upgrade_firmware.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u > /dev/null")
