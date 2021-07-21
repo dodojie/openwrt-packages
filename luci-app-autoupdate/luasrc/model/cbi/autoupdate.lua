@@ -46,13 +46,13 @@ o.default=github_url
 
 local local_version = luci.sys.exec ("bash /bin/AutoUpdate.sh --var CURRENT_Version")
 local firmware_type = luci.sys.exec ("bash /bin/AutoUpdate.sh --var Firmware_Type")
-local local_script_version = luci.sys.exec ("bash /bin/AutoUpdate.sh -V")
+local local_script_version = luci.sys.exec ("bash /bin/AutoUpdate.sh --version")
 
 button_check_updates = s:option (Button, "_button_check_updates", translate("Check Updates"),translate("Please Refresh the page after clicking Check Updates button"))
 button_check_updates.inputtitle = translate ("Check Updates")
 button_check_updates.write = function()
-	luci.sys.call ("bash /bin/AutoUpdate.sh -Q cloud > /tmp/Cloud_Version")
-	luci.sys.call ("bash /bin/AutoUpdate.sh -V cloud > /tmp/Cloud_Script_Version")
+	luci.sys.call ("bash /bin/AutoUpdate.sh --fw-version cloud > /tmp/Cloud_Version")
+	luci.sys.call ("bash /bin/AutoUpdate.sh --version cloud > /tmp/Cloud_Script_Version")
 end
 
 local cloud_version = luci.sys.exec ("cat /tmp/Cloud_Version")
