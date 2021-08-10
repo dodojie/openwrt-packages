@@ -43,8 +43,8 @@ msgstr "Github 地址"
 msgid "Upgrade without keeping System-Config"
 msgstr "不保留配置更新固件"
 
-msgid "Upgrade with [FastGit] Proxy"
-msgstr "优先使用 [FastGit] 镜像更新固件"
+msgid "Upgrade with Proxy"
+msgstr "优先使用镜像加速更新固件"
 
 msgid "Please wait patiently after clicking Do Upgrade button"
 msgstr "点击执行更新后请耐心等待至路由器重启"
