@@ -1,23 +1,23 @@
 require("luci.sys")
 
-m=Map("autoupdate",translate("AutoUpdate"),
+m = Map("autoupdate",translate("AutoUpdate"),
 translate("AutoUpdate LUCI supports one-click firmware upgrade and scheduled upgrade")
 .. [[<br /><br /><a href="https://github.com/Hyy2001X/AutoBuild-Actions">]]
 .. translate("Powered by AutoBuild-Actions")
 .. [[</a>]]
 )
 
-s=m:section(TypedSection,"common","")
+s = m:section(TypedSection,"autoupdate","")
 s.anonymous=true
 s.reset=false
 
-o = s:option(Flag, "enable", translate("Enable AutoUpdate"),translate("Automatically update firmware during the specified time"))
+o = s:option(Flag, "enable", translate("Enable"),translate("Automatically update firmware during the specified time"))
 o.default = 0
 o.optional = false
 o = s:option(Flag, "enable_proxy", translate("Preference Proxy"),translate("Preference Proxy for speeding up downloads"))
 o.default = 0
 o.optional = false
-o = s:option(Flag, "force_write", translate("Force Flashing"),translate("Preference Force Flash while firmware upgrading"))
+o = s:option(Flag, "force_write", translate("Force Flashing"),translate("Preference Force Flashing while firmware upgrading"))
 o.default = 0
 o.optional = false
 
@@ -46,7 +46,6 @@ o.default=github_url
 
 local local_version = luci.sys.exec ("bash /bin/AutoUpdate.sh -V")
 local local_script_version = luci.sys.exec ("bash /bin/AutoUpdate.sh -v")
-local firmware_type = luci.sys.exec ("bash /bin/AutoUpdate.sh --var Firmware_Type")
 
 button_check_updates = s:option (Button, "_button_check_updates", translate("Check Updates"),translate("Please Refresh the page after clicking Check Updates button"))
 button_check_updates.inputtitle = translate ("Check Updates")
@@ -62,12 +61,6 @@ button_upgrade_firmware = s:option (Button, "_button_upgrade_firmware", translat
 translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前固件版本: " .. local_version .. "<br>云端固件版本: " .. cloud_version)
 button_upgrade_firmware.inputtitle = translate ("Do Upgrade")
 button_upgrade_firmware.write = function()
-	luci.sys.call ("bash /bin/AutoUpdate.sh -u > /dev/null")
-end
-
-button_upgrade_firmware_proxy = s:option (Button, "_button_upgrade_firmware_proxy", translate("Upgrade Firmware"),translate("Upgrade with Proxy"))
-button_upgrade_firmware_proxy.inputtitle = translate ("Do Upgrade")
-button_upgrade_firmware_proxy.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u -P > /dev/null")
 end
 

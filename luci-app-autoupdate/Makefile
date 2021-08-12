@@ -2,11 +2,11 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI Support for AutoBuild Firmware
-LUCI_DEPENDS:=+wget-ssl +bash
+LUCI_TITLE:=LuCI Support for AutoUpdate.sh
+LUCI_DEPENDS:=+bash
 LUCI_PKGARCH:=all
-PKG_VERSION:=1
-PKG_RELEASE:=20210809
+PKG_VERSION:=1.0
+PKG_RELEASE:=20210812
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

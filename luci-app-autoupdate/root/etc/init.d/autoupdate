@@ -1,9 +1,9 @@
 #!/bin/bash /etc/rc.common
 START=99
-export Script=/bin/AutoUpdate.sh
-export Corn_Task="bash ${Script} -u"
+Script=/bin/AutoUpdate.sh
+Corn_Task="bash ${Script} -u"
 
-AutoUpdate_Service() {
+start_instance() {
 	[[ ! -f ${Script} ]] && exit 1
 	local enable
 	config_get_bool enable $1 enable
@@ -19,11 +19,11 @@ AutoUpdate_Service() {
 		[[ ${enable_proxy} == 1 ]] && Corn_Task="${Corn_Task} -P"
 		[[ ${force_write} == 1 ]] && Corn_Task="${Corn_Task} -F"
 		echo "Corn: [${minute} ${hour} * * ${week} ${Corn_Task}]"
-		echo -e "${minute} ${hour} * * ${week} ${Corn_Task}		#AutoUpdate_CornTask" >> /etc/crontabs/root
+		echo -e "${minute} ${hour} * * ${week} ${Corn_Task}		#AutoUpdate" >> /etc/crontabs/root
 		/etc/init.d/cron restart
 	else
-		uci_set autoupdate common force_write 0
-		uci_set autoupdate common enable_proxy 0
+		uci_set autoupdate autoupdate force_write 0
+		uci_set autoupdate autoupdate enable_proxy 0
 		corn_rm
 	fi
 	config_get github $1 github
@@ -40,7 +40,7 @@ uci_set() {
 corn_rm() {
 	[[ $(cat /etc/crontabs/root) =~ "#AutoUpdate_CornTask" ]] && {
 		echo "Removing corn task ..."
-		sed -i "/#AutoUpdate_CornTask/d" /etc/crontabs/root
+		sed -i "/#AutoUpdate/d" /etc/crontabs/root
 		/etc/init.d/cron restart
 	}
 }
@@ -49,18 +49,20 @@ start() {
 	bash ${Script} --clean > /dev/null 2>&1
 	echo "Starting AutoUpdate service ..."
 	config_load autoupdate
-	config_foreach AutoUpdate_Service common
+	config_foreach start_instance autoupdate
 }
 
-service_triggers()
-{
+service_triggers() {
 	procd_add_reload_trigger "autoupdate"
 }
 
 disable() {
-	echo "Disable AutoUpdate service ..."
-	uci_set autoupdate common enable 0
-	uci_set autoupdate common force_write 0
-	uci_set autoupdate common enable_proxy 0
+	echo "Disabling AutoUpdate service ..."
+	uci_set autoupdate autoupdate enable 0
+	uci commit autoupdate
 	corn_rm
+}
+
+service_triggers() {
+	procd_add_reload_trigger "autoupdate"
 }
