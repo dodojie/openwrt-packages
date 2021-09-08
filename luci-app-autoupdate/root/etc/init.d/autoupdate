@@ -1,68 +1,62 @@
 #!/bin/bash /etc/rc.common
 START=99
 Script=/bin/AutoUpdate.sh
-Corn_Task="bash ${Script} -u"
+Script_Command="bash $Script -u"
 
 start_instance() {
-	[[ ! -f ${Script} ]] && exit 1
-	local enable
+	[[ ! -s $Script ]] && return 1
+	local enable proxy forceflash github autocheck week minute hour
 	config_get_bool enable $1 enable
-	if [[ ${enable} == 1 ]]; then
-		config_get enable_proxy $1 enable_proxy
-		config_get force_write $1 force_write
+	if [[ $enable == 1 ]]; then
+		config_get proxy $1 proxy
+		config_get forceflash $1 forceflash
+		config_get github $1 github
+		config_get autocheck $1 autocheck
 		config_get week $1 week
 		config_get minute $1 minute
 		config_get hour $1 hour
-		config_get enable_proxy $1 enable_proxy
-		[[ ${week} == 7 ]] && week="*"
-		corn_rm
-		[[ ${enable_proxy} == 1 ]] && Corn_Task="${Corn_Task} -P"
-		[[ ${force_write} == 1 ]] && Corn_Task="${Corn_Task} -F"
-		echo "Corn: [${minute} ${hour} * * ${week} ${Corn_Task}]"
-		echo -e "${minute} ${hour} * * ${week} ${Corn_Task}		#AutoUpdate" >> /etc/crontabs/root
+		[[ $week == 7 ]] && week='*'
+		remove_corntask
+		[[ $proxy == 1 ]] && Script_Command="$Script_Command -P"
+		[[ $forceflash == 1 ]] && Script_Command="$Script_Command -F"
+		echo -e "$minute $hour * * $week $Script_Command		## AutoUpdate crontab" >> /etc/crontabs/root
+		[[ $autocheck != 0 ]] && {
+			echo -e "* */$autocheck * * * bash $Script -V Cloud > /tmp/Cloud_Version		## AutoUpdate crontab" >> /etc/crontabs/root
+			echo -e "* */$autocheck * * * bash $Script -v Cloud > /tmp/Cloud_Script_Version		## AutoUpdate crontab" >> /etc/crontabs/root
+		}
 		/etc/init.d/cron restart
 	else
-		uci_set autoupdate autoupdate force_write 0
-		uci_set autoupdate autoupdate enable_proxy 0
-		corn_rm
+		remove_corntask
 	fi
-	config_get github $1 github
-	echo "Github: ${github}"
-	bash ${Script} -C ${github} > /dev/null 2>&1
-	exit 0
+	bash $Script -C $github > /dev/null 2>&1
+	bash $Script --clean > /dev/null 2>&1
 }
 
-uci_set() {
-	uci set $1.@$2[0].$3=$4
-	uci commit $1
-}
-
-corn_rm() {
-	[[ $(cat /etc/crontabs/root) =~ "#AutoUpdate_CornTask" ]] && {
-		echo "Removing corn task ..."
-		sed -i "/#AutoUpdate/d" /etc/crontabs/root
+remove_corntask() {
+	[[ $(cat /etc/crontabs/root) =~ "## AutoUpdate crontab" ]] && {
+		sed -i '/## AutoUpdate crontab/d' /etc/crontabs/root
 		/etc/init.d/cron restart
 	}
 }
 
+disable() {
+	remove_corntask
+	uci set autoupdate.@autoupdate[0].enable=0
+	uci set autoupdate.@autoupdate[0].proxy=0
+	uci set autoupdate.@autoupdate[0].forceflash=0
+	uci set autoupdate.@autoupdate[0].autocheck=0
+	uci commit autoupdate
+}
+
+service_triggers() {
+	procd_add_reload_trigger "autoupdate"
+}
+
+stop() {
+	remove_corntask
+}
+
 start() {
-	bash ${Script} --clean > /dev/null 2>&1
-	echo "Starting AutoUpdate service ..."
 	config_load autoupdate
 	config_foreach start_instance autoupdate
-}
-
-service_triggers() {
-	procd_add_reload_trigger "autoupdate"
-}
-
-disable() {
-	echo "Disabling AutoUpdate service ..."
-	uci_set autoupdate autoupdate enable 0
-	uci commit autoupdate
-	corn_rm
-}
-
-service_triggers() {
-	procd_add_reload_trigger "autoupdate"
 }

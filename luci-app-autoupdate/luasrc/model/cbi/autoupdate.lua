@@ -8,20 +8,20 @@ translate("AutoUpdate LUCI supports one-click firmware upgrade and scheduled upg
 )
 
 s = m:section(TypedSection,"autoupdate","")
-s.anonymous=true
-s.reset=false
+s.anonymous = true
+s.reset = false
 
 o = s:option(Flag, "enable", translate("Enable"),translate("Automatically update firmware during the specified time"))
 o.default = 0
 o.optional = false
-o = s:option(Flag, "enable_proxy", translate("Preference Proxy"),translate("Preference Proxy for speeding up downloads"))
+o = s:option(Flag, "proxy", translate("Enable Preference Proxy"),translate("Preference Proxy for speeding up downloads"))
 o.default = 0
 o.optional = false
-o = s:option(Flag, "force_write", translate("Force Flashing"),translate("Preference Force Flashing while firmware upgrading"))
+o = s:option(Flag, "forceflash", translate("Enable Force Flashing"),translate("Preference Force Flashing while firmware upgrading"))
 o.default = 0
 o.optional = false
 
-week=s:option(ListValue,"week",translate("Upgrade Day"))
+week = s:option(ListValue,"week",translate("AutoUpdate Day"),translate("Recommend to upgrade the firmware automatically at idle time"))
 week:value(7,translate("Everyday"))
 week:value(1,translate("Monday"))
 week:value(2,translate("Tuesday"))
@@ -30,19 +30,23 @@ week:value(4,translate("Thursday"))
 week:value(5,translate("Friday"))
 week:value(6,translate("Saturday"))
 week:value(0,translate("Sunday"))
-week.default=0
+week.default = 0
 
-hour=s:option(Value,"hour",translate("Hour"),translate("Recommend to upgrade the firmware automatically at idle time"))
+hour = s:option(Value,"hour",translate("AutoUpdate Hour"))
 hour.datatype = "range(0,23)"
 hour.rmempty = false
 
-pass=s:option(Value,"minute",translate("Minute"))
-pass.datatype = "range(0,59)"
-pass.rmempty = false
+minutes = s:option(Value,"minute",translate("AutoUpdate Minute"))
+minutes.datatype = "range(0,59)"
+minutes.rmempty = false
+
+autocheck = s:option(Value,"autocheck",translate("Check Freq"),translate("Check updates only period periodically 0: Disable"))
+autocheck.datatype = "range(0,23)"
+autocheck.rmempty = false
 
 local github_url = luci.sys.exec("bash /bin/AutoUpdate.sh --var Github")
-o=s:option(Value,"github",translate("Github Url"),translate("For detecting cloud firmware version and downloading firmware"))
-o.default=github_url
+o = s:option(Value,"github",translate("Github Url"),translate("For detecting cloud firmware version and downloading firmware"))
+o.default = github_url
 
 local local_version = luci.sys.exec ("bash /bin/AutoUpdate.sh -V")
 local local_script_version = luci.sys.exec ("bash /bin/AutoUpdate.sh -v")
@@ -58,7 +62,7 @@ local cloud_version = luci.sys.exec ("cat /tmp/Cloud_Version")
 local cloud_script_version = luci.sys.exec ("cat /tmp/Cloud_Script_Version")
 
 button_upgrade_firmware = s:option (Button, "_button_upgrade_firmware", translate("Upgrade Firmware"),
-translatef("Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前固件版本: " .. local_version .. "<br>云端固件版本: " .. cloud_version)
+translatef("Common upgrade; Please wait patiently after clicking Do Upgrade button") .. "<br><br>当前固件版本: " .. local_version .. "<br>云端固件版本: " .. cloud_version)
 button_upgrade_firmware.inputtitle = translate ("Do Upgrade")
 button_upgrade_firmware.write = function()
 	luci.sys.call ("bash /bin/AutoUpdate.sh -u -P > /dev/null")
