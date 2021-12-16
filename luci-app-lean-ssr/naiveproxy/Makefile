@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=naiveproxy
-PKG_VERSION:=94.0.4606.61-1
-PKG_RELEASE:=2
+PKG_VERSION:=96.0.4664.45-1
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/klzgrad/naiveproxy/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=26c00dfe14284ff19fe78e4185649a48292582adf7d6e3d2d0e994098c393097
+PKG_HASH:=b7ec325ac48d85063137a9efa3cbee7184052d7f4b4c469d88f4e5223235ca1f
 
 PKG_LICENSE:=BSD 3-Clause
 PKG_LICENSE_FILES:=LICENSE
@@ -22,6 +22,14 @@ PKG_BUILD_DEPENDS+= ninja/host
 endif
 PKG_USE_MIPS16:=0
 PKG_BUILD_PARALLEL:=1
+
+ifeq ($(NINJA),)
+NINJA = \
+	MAKEFLAGS="$(MAKE_JOBSERVER)" \
+		$(STAGING_DIR_HOSTPKG)/bin/ninja \
+		$(if $(findstring c,$(OPENWRT_VERBOSE)),-v) \
+		$(if $(MAKE_JOBSERVER),,-j1)
+endif
 
 ifneq ($(CONFIG_CPU_TYPE)," ")
   CPU_TYPE:=$(word 1, $(subst +," ,$(CONFIG_CPU_TYPE)))
@@ -36,17 +44,13 @@ endif
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/naiveproxy/config
-	depends on !(arc||armeb||mips||mips64||powerpc)
-endef
-
 define Package/naiveproxy
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
   URL:=https://github.com/klzgrad/naiveproxy
   TITLE:=Make a fortune quietly
-  DEPENDS:=+libatomic
+  DEPENDS:=@!(arc||armeb||mips||mips64||powerpc||TARGET_gemini) +libatomic
 endef
 
 define Package/naiveproxy/description
@@ -62,32 +66,38 @@ ifneq ($(CONFIG_CCACHE),)
   export naive_ccache_flags=cc_wrapper="$(CCACHE)"
 endif
 
-CLANG_VER:=14-init-1002-gb5e470aa-1
+CLANG_VER:=14-init-5759-g02895eed-1
 CLANG_FILE:=clang-llvmorg-$(CLANG_VER).tgz
 define Download/CLANG
-	URL:=https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64
+	URL:=https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64 \
+	     https://sources.immortalwrt.org \
+	     https://sources.cdn.immortalwrt.org
 	URL_FILE:=$(CLANG_FILE)
 	FILE:=$(CLANG_FILE)
-	HASH:=bed9118082c98d990434c02230d9eec5e3aa3158b479d4cd3317482906d4e897
+	HASH:=5c2d11236c7254d48b02535ff58897830bc64e7258434d658c7d606e8d01b179
 endef
 
-GN_VER:=69ec4fca1fa69ddadae13f9e6b7507efa0675263
+GN_VER:=0153d369bbccc908f4da4993b1ba82728055926a
 GN_FILE:=gn-git_revision-$(GN_VER).zip
 define Download/GN_TOOL
-	URL:=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+
+	URL:=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+ \
+	     https://sources.immortalwrt.org \
+	     https://sources.cdn.immortalwrt.org
 	URL_FILE:=git_revision:$(GN_VER)
 	FILE:=$(GN_FILE)
-	HASH:=8bedd600ac58311f384e5113ab6a544bc72edb587ccb8f9e784c4dff208872c4
+	HASH:=8022d1e0d6627a740847806c27a195fa9fc15c4883359a6d162944c3d5e26b44
 endef
 
-PGO_VER:=4606-1632147900-2674511630c4bfe602871b9780dec43586d68327
+PGO_VER:=4664-1636557077-6e390f4e505916531ca2ab0c895d5903ab4d88a9
 PGO_FILE:=chrome-linux-$(PGO_VER).profdata
 define Download/PGO_PROF
 	URL:=https://storage.googleapis.com.cnpmjs.org/chromium-optimization-profiles/pgo_profiles \
-	     https://storage.googleapis.com/chromium-optimization-profiles/pgo_profiles
+	     https://storage.googleapis.com/chromium-optimization-profiles/pgo_profiles \
+	     https://sources.immortalwrt.org \
+	     https://sources.cdn.immortalwrt.org
 	URL_FILE:=$(PGO_FILE)
 	FILE:=$(PGO_FILE)
-	HASH:=d729c99079a619fc0fa33b3f79a731942cad7fcefae0a683678e3c32530d1bf7
+	HASH:=8dcf5973033d40c9a7b15e571dea3832e7b67976aad9113369e22d43808c603f
 endef
 
 define Build/Prepare
@@ -104,14 +114,6 @@ define Build/Prepare
 	)
 endef
 
-ifeq ($(NINJA),)
-NINJA = \
-	MAKEFLAGS="$(MAKE_JOBSERVER)" \
-		$(STAGING_DIR_HOSTPKG)/bin/ninja \
-		$(if $(findstring c,$(OPENWRT_VERBOSE)),-v) \
-		$(if $(MAKE_JOBSERVER),,-j1)
-endif
-
 define Build/Compile
 	( \
 		cd "$(PKG_BUILD_DIR)/src" ; \
@@ -119,8 +121,8 @@ define Build/Compile
 		export naive_flags+=" $$$${naive_ccache_flags}" ; \
 		mkdir -p "out" ; \
 		./gn/out/gn gen "out/Release" --args="$$$${naive_flags}" --script-executable="$(PYTHON)" ; \
+		$(NINJA) -C "$(PKG_BUILD_DIR)/src/out/Release" naive ; \
 	)
-	+$(NINJA) -C "$(PKG_BUILD_DIR)/src/out/Release" naive
 endef
 
 define Package/naiveproxy/install

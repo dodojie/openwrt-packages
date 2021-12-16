@@ -6,7 +6,6 @@ config global
 	option koolproxy_mode '1'
 	option koolproxy_host '1'
 	option koolproxy_rules 'koolproxy.txt daily.txt kp.dat user.txt'
-	option thirdparty_rules 'anti-ad.txt'
 	option koolproxy_ipv6 '0'
 	option time_update 'nil'
 	
@@ -14,12 +13,12 @@ config acl_rule
 	option proxy_mode '2'
 	option remarks '选要滤https的客户端'
 	option ipaddr '192.168.168.168'
-
+	
 config rss_rule
+        option file 'ikprule.txt'
+	option name 'IKPR规则'
+	option url 'https://iwrt.coding.net/p/ikoolproxy/d/rules/git/raw/master/rules/ikprule.txt'
 	option load '1'
-	option name 'kpr_our_rule'
-	option url 'https://raw.sevencdn.com/project-lede/koolproxy/main/rules/kpr_our_rule.txt'
-
 config usetips
 	option load '0'
 	option name '1'
