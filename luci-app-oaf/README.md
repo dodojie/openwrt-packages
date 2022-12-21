@@ -1,57 +1,54 @@
-
-
-应用过滤是一款基于OpenWrt的家长管理插件，支持游戏、视频、聊天、下载等app过滤  
-这是5.x源码，只对重大bug进行修复。
-
-### 如何编译应用过滤固件
-1. 准备OpenWrt源码，并编译成功  
-   推荐源码仓库：  
-   https://github.com/coolsnowwolf/lede.git  
-   如果用官方源码，不要用master分支，因为luci版本不兼容，推荐18.06版本。  
-2. clone应用过滤源码到OpenWrt源码package目录  
-git clone https://github.com/destan19/OpenAppFilter.git package/OpenAppFilter  
-3. make menuconfig 开启应用过滤插件宏  
-    在OpenWrt源码目录执行make menuconfig，进入luci app菜单选择luci-app-oaf保存  
-4. 编译生成固件  
-    make V=s   
-### 使用说明
-1. 将应用过滤设备做主路由  
-2. 关闭软硬加速、广告过滤、QOS、多WAN等涉及到nf_conn mark的模块  
-3. 开启应用过滤并选择需要过滤的app即可生效  
-
-### 如何自定义特征码
-https://zhuanlan.zhihu.com/p/419053529  
-
-### 固件和特征库下载地址
-https://destan19.github.io    
-
-### 演示视频 
-https://www.bilibili.com/video/BV1ZL41137aT/
-
-### 6.0以上版本ipk安装
-1. 通过以下源码编译固件  
-https://github.com/destan19/openfros  
-2. 在release中下载ipk文件直接安装  
-
-### OpenWrt应用过滤交流群
-群号： 868508199
-
-点击链接加入群聊【OpenWrt技术交流】：https://jq.qq.com/?_wv=1027&k=GRkd86no
-
-App filtering is a parent management plug-in based on OpenWrt, which supports app filtering for games, videos, chats, downloads, etc.
-### How to compile application filtering firmware
-1. Prepare OpenWrt source code and compile successfully  
-    Recommended source code repository:  
-    https://github.com/coolsnowwolf/lede.git  
-    If you use the official source code, do not use the master branch, because the luci version is not compatible, version 18.06 is recommended.  
-2. Clone the application filtering source code to the OpenWrt source code package directory  
-git clone https://github.com/destan19/OpenAppFilter.git package/OpenAppFilter  
-3. make menuconfig to open the application filter plug-in macro  
-     Execute make menuconfig in the OpenWrt source code directory, enter the luci app menu and select luci-app-oaf to save  
-4. Compile and generate firmware  
+## OAF(Open App Filter)  
+OAF is a parental control plug-in based on OpenWrt, which supports app filtering for games, videos, chats, downloads, such as Tiktok, Youtube, Telegram,etc.,and support self-defined app rules, you can lean more and download firmware by visiting [www.openappfilter.com](http://www.openappfilter.com) .
+### Preparation
+- Prepare a router that supports openwrt  
+There are already many routers that support the openwrt system, you can choose a simple one for installation,[See which devices support](https://openwrt.org).  
+- Install the openwrt system on your router  
+The openwrt install tutorial can be found through the [forum](https://forum.openwrt.org).  
+### How to compile OAF  
+1. Prepare OpenWrt source or SDK and compile successfully   
+#### general steps  
+```
+   git clone https://github.com/openwrt/openwrt
+   cd openwrt
+   ./scripts/feeds update -a
+   ./scripts/feeds install -a
+   make defconfig
+   make V=s
+```   
+2. Download OAF source code  
+git clone https://github.com/destan19/OpenAppFilter.git package/OpenAppFilter    
+3. Open the compile configuration   
+```
+     echo "CONFIG_PACKAGE_luci-app-oaf=y" >>.config  
+     make defconfig  
+```
+4. Begin compile  
+- Compile OAF separately  
+```
+     make package/luci-app-oaf/compile V=s  
+```
+- Compile the entire firmware  
+```
      make V=s  
-### Instructions for use
-1. Make the application filtering device the main route  
-2. Turn off software and hardware acceleration, advertising filtering, QOS, multi-WAN and other modules related to nf_conn mark  
-3. Turn on application filtering and select the app that needs to be filtered to take effect  
+```
+### How to install OAF  
+If you can't compile it yourself, you can install it directly into the released OpenWrt version  
+1. Install an officially released version of openwrt  
+Note that it must be the official release version,may cause failure if other versions are used, because OAF depend on the kernel version.  
+It is best to download through the following official address  
+https://downloads.openwrt.org/releases   
+2. Download OAF zip file  
+Find the corresponding OAF zip file on the release page and download it, note that the plug-in version and the system version must be consistent.  
+3. Install OAF ipks  
+Unzip thie OAF package and then install ipks in order  
+- kmod-oaf  
+- appfilter   
+- luci-compat(if the luci version is 2.0, openwrt 19.07+)   
+- luci-app-oaf    
+- luci-i18n-oaf-zh-cn(Chinese Language Pack, optional)  
+
+### Notice
+If there is no version you need, you need to compile and generate it yourself, and I will release more architecture ipks later.
+
 

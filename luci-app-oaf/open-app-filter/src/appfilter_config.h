@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 #ifndef __APPFILTER_CONFIG_H__
 #define __APPFILTER_CONFIG_H__
-#define MAX_SUPPORT_APP_NUM 256
+#define MAX_SUPPORT_APP_NUM 1024
 #define MAX_CLASS_NAME_LEN 32
 #include "appfilter_user.h"
 extern int g_cur_class_num;
@@ -34,8 +34,11 @@ typedef struct af_time
 } af_time_t;
 typedef struct af_ctl_time
 {
+    int time_mode; // 0,1
     af_time_t start;
     af_time_t end;
+    af_time_t start2; // todo: time group list
+    af_time_t end2;
     int days[7];
 } af_ctl_time_t;
 
@@ -53,5 +56,6 @@ int appfilter_config_alloc(void);
 int appfilter_config_free(void);
 af_ctl_time_t *load_appfilter_ctl_time_config(void);
 int config_get_appfilter_enable(void);
+int config_get_lan_ip(char *lan_ip, int len);
 
 #endif
