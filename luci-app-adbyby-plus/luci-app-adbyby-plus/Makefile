@@ -5,7 +5,7 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI support for Adbyby
+PKG_NAME:=luci-app-adbyby-plus
 LUCI_DEPENDS:=+adbyby +uclient-fetch +ipset +dnsmasq-full
 LUCI_PKGARCH:=all
 PKG_NAME:=luci-app-adbyby-plus

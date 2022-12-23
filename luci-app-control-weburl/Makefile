@@ -5,7 +5,7 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI support for Weburl From Koolshare
+PKG_NAME:=luci-app-control-weburl
 LUCI_DEPENDS:=+iptables-mod-filter +kmod-ipt-filter
 LUCI_PKGARCH:=all
 PKG_VERSION:=1.0

@@ -5,7 +5,7 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI support for Webrestriction From Koolshare
+PKG_NAME:=luci-app-control-webrestriction
 LUCI_PKGARCH:=all
 PKG_VERSION:=1.0
 PKG_RELEASE:=5-20220406
