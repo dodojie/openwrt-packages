@@ -5,7 +5,7 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI support for Time Control
+PKG_NAME:=luci-app-timecontrol
 LUCI_PKGARCH:=all
 PKG_VERSION:=1.1
 PKG_RELEASE:=20220505
