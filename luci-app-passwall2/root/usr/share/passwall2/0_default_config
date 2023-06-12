@@ -4,6 +4,7 @@ config global
 	option node_socks_port '1070'
 	option localhost_proxy '1'
 	option socks_enabled '0'
+	option acl_enable '0'
 	option node 'myshunt'
 	option direct_dns_protocol 'auto'
 	option direct_dns_query_strategy 'UseIP'
@@ -14,11 +15,14 @@ config global
 dns.google.com 8.8.8.8'
 	option close_log '0'
 	option loglevel 'error'
+	
+config global_haproxy
+	option balancing_enable '0'
 
 config global_delay
 	option auto_on '0'
 	option start_daemon '1'
-	option start_delay '1'
+	option start_delay '60'
 
 config global_forwarding
 	option tcp_no_redir_ports 'disable'
@@ -26,6 +30,7 @@ config global_forwarding
 	option tcp_redir_ports '22,25,53,143,465,587,853,993,995,80,443'
 	option udp_redir_ports '1:65535'
 	option accept_icmp '0'
+	option use_nft '0'
 	option tcp_proxy_way 'redirect'
 	option ipv6_tproxy '0'
 	option sniffing '1'
@@ -69,6 +74,7 @@ config nodes 'myshunt'
 	option AD 'nil'
 	option BT '_direct'
 	option Netflix 'nil'
+	option OpenAI 'nil'
 	option TVB 'nil'
 	option Proxy '_default'
 	option China '_direct'
@@ -172,6 +178,10 @@ config shunt_rules 'Netflix'
 	option remarks 'Netflix'
 	option network 'tcp,udp'
 	option domain_list 'geosite:netflix'
+	
+config shunt_rules 'OpenAI'
+	option remarks 'OpenAI'
+	option domain_list 'geosite:openai'
 
 config shunt_rules 'TVB'
 	option remarks 'TVB'

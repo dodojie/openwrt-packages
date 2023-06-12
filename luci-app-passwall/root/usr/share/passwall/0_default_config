@@ -8,10 +8,12 @@ config global
 	option dns_mode 'dns2tcp'
 	option remote_dns '1.1.1.1'
 	option filter_proxy_ipv6 '0'
+	option when_chnroute_default_dns 'direct'
 	option tcp_proxy_mode 'chnroute'
 	option udp_proxy_mode 'chnroute'
 	option localhost_tcp_proxy_mode 'default'
 	option localhost_udp_proxy_mode 'default'
+	option acl_enable '0'
 	option close_log_tcp '0'
 	option close_log_udp '0'
 	option loglevel 'error'
@@ -23,7 +25,7 @@ config global_haproxy
 config global_delay
 	option auto_on '0'
 	option start_daemon '1'
-	option start_delay '1'
+	option start_delay '60'
 
 config global_forwarding
 	option tcp_no_redir_ports 'disable'
@@ -66,6 +68,7 @@ config global_app
 	option trojan_go_file '/usr/bin/trojan-go'
 	option brook_file '/usr/bin/brook'
 	option hysteria_file '/usr/bin/hysteria'
+	option chinadns_ng '/usr/bin/chinadns-ng'
 
 config global_subscribe
 	option filter_keyword_mode '1'
@@ -90,6 +93,7 @@ config nodes 'myshunt'
 	option BT '_direct'
 	option Proxy '_default'
 	option Netflix '_default'
+	option OpenAI '_default'
 	option Direct '_direct'
 	option default_node 'nil'
 	option domainStrategy 'IPOnDemand'
@@ -184,6 +188,10 @@ config shunt_rules 'Proxy'
 config shunt_rules 'Netflix'
 	option remarks 'Netflix'
 	option domain_list 'geosite:netflix'
+	
+config shunt_rules 'OpenAI'
+	option remarks 'OpenAI'
+	option domain_list 'openai.com'
 
 config shunt_rules 'Direct'
 	option remarks 'Direct'
